@@ -1,0 +1,11 @@
+{
+    "name": "headplan/headplan",
+    "description": "headplan",
+    "authors": [
+        {
+            "name": "headplan",
+            "email": "headplan@163.com"
+        }
+    ],
+    "require": {}
+}
