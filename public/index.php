@@ -10,8 +10,8 @@ $response = new Response();
 
 # 文件map
 $map = [
-    '/hello' => __DIR__.'/../resources/views/hello.php',
-    '/about' => __DIR__.'/../resources/views/about.php'
+    '/hello' => 'hello',
+    '/about' => 'about'
 ];
 
 # 获取Pathinfo
@@ -20,7 +20,10 @@ $path = $request->getPathInfo();
 if (isset($map[$path])) {
     # 存在则引入,打开缓冲区并获取缓冲区的内容给响应
     ob_start();
-    include $map[$path];
+    # 导入全局数组中的变量
+    extract($request->query->all(), EXTR_SKIP);
+    # 更统一的引入
+    include sprintf(__DIR__.'/../resources/views/%s.php', $map[$path]);;
     $response->setContent(ob_get_clean());
 } else {
     # 不存在则调整响应信息
