@@ -20,4 +20,23 @@ $routes->add('about', new Routing\Route('/about', [
     }
 ]));
 
+function is_leap_year($year = null)
+{
+    if (null === $year) {
+        $year = date('Y');
+    }
+
+    return 0 === $year % 400 || (0 === $year % 4 && 0 !== $year % 100);
+}
+
+$routes->add('leap-year', new Routing\Route('/leap-year/{year}', [
+    '_controller' => function ($request) {
+        if (is_leap_year($request->attributes->get('year'))) {
+            return new Response('是闰年!'.'现在时间是:'.date('Y-m-d H:i:s', time()));
+        }
+        return new Response('不是闰年!'.'现在时间是:'.date('Y-m-d H:i:s', time()));
+    }
+]));
+
+
 return $routes;
