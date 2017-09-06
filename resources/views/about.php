@@ -1,2 +1,2 @@
 <?php
-echo "About!";
+echo "About:$test";

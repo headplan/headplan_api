@@ -6,6 +6,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing;
 
+# 通用控制器,解耦模板渲染
+function render_template($request)
+{
+    # 和请求有关的一些附加参数
+    extract($request->attributes->all(), EXTR_SKIP);
+    ob_start();
+    include sprintf(__DIR__.'/../resources/views/%s.php', $_route);
+
+    return new Response(ob_get_clean()); 
+}
+
 $request = Request::createFromGlobals();
 
 # 引入路由配置
@@ -16,10 +27,12 @@ $context->fromRequest($request);
 $matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 # 模板判断改为异常判断
 try {
-    extract($matcher->match($request->getPathInfo()), EXTR_SKIP);
-    ob_start();
-    include sprintf(__DIR__.'/../resources/views/%s.php', $_route);
-    $response = new Response(ob_get_clean());
+    # 添加附加请求参数,即pathinfo的数组形式.
+    $request->attributes->add($matcher->match($request->getPathInfo()));
+    # 这里回调约定好的_controller匿名函数
+    # 从路由配置中获取
+    $_controller = $request->attributes->get('_controller');
+    $response = call_user_func($_controller ,$request);
 } catch (Routing\Exception\ResourceNotFoundException $e) {
     $response = new Response('Not Found', 404);
 } catch (Exception $e) {
