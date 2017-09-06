@@ -1,2 +1,0 @@
-<?php
-$response->setContent('About!');
