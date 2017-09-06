@@ -7,5 +7,7 @@
             "email": "headplan@163.com"
         }
     ],
-    "require": {}
+    "require": {
+        "symfony/http-foundation": "^3.3"
+    }
 }
