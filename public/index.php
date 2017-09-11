@@ -24,7 +24,15 @@ $routes = include __DIR__.'/../config/listeners.php';
 
 # 实例化框架
 $framework = new Framework($dispatcher, $matcher, $controllerResolver, $argumentResolver);
-$response = $framework->handle($request);
+# HTTP缓存
+$framework = new HttpKernel\HttpCache\HttpCache(
+    $framework,
+    new HttpKernel\HttpCache\Store(__DIR__.'/../storage/cache'),
+    new HttpKernel\HttpCache\Esi(),
+    [
+        'debug' => true,
+    ]
+);
 
 # 响应给浏览器
-$response->send();
+$framework->handle($request)->send();

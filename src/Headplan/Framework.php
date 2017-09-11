@@ -3,6 +3,7 @@ namespace Headplan;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -10,7 +11,7 @@ use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Headplan\Events\ResponseEvent;
 
-class Framework
+class Framework implements HttpKernelInterface
 {
     # 派遣器
     private $dispatcher;
@@ -34,7 +35,11 @@ class Framework
         $this->argumentResolver = $argumentResolver;
     }
     
-    public function handle(Request $request)
+    public function handle(
+        Request $request,
+        $type = HttpKernelInterface::MASTER_REQUEST,
+        $catch = true
+    )
     {
         $this->matcher->getContext()->fromRequest($request);
 
@@ -45,6 +50,7 @@ class Framework
             $arguments = $this->argumentResolver->getArguments($request, $controller);
 
             $response = call_user_func_array($controller, $arguments);
+            $response->setTtl(10);
         } catch (ResourceNotFoundException $e) {
             $response = new Response('Not Found', 404);
         } catch (\Exception $e) {

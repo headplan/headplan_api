@@ -7,13 +7,15 @@ use App\Models\LeapYear;
 
 class LeapYearController
 {
-    public function indexAction(Request $request,$year)
+    public function indexAction(Request $request, $year)
     {
         $leapyear = new LeapYear();
         if ($leapyear->isLeapYear($year)) {
-            return new Response($year.'是闰年!'.'现在时间是:'.date('Y-m-d H:i:s', time()));
+            $response = new Response($year.'是闰年!'.'现在时间是:'.date('Y-m-d H:i:s', time()).rand());
+        } else {
+            $response = new Response($year.'不是闰年!'.'现在时间是:'.date('Y-m-d H:i:s', time()).rand());
         }
 
-        return new Response($year.'不是闰年!'.'现在时间是:'.date('Y-m-d H:i:s', time()));
+        return $response;
     }
 }
