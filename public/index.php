@@ -19,8 +19,11 @@ $matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 $controllerResolver = new HttpKernel\Controller\ControllerResolver();
 $argumentResolver = new HttpKernel\Controller\ArgumentResolver();
 
+# 创建dispatcher并注册一个监听到response事件
+$routes = include __DIR__.'/../config/listeners.php';
+
 # 实例化框架
-$framework = new Framework($matcher, $controllerResolver, $argumentResolver);
+$framework = new Framework($dispatcher, $matcher, $controllerResolver, $argumentResolver);
 $response = $framework->handle($request);
 
 # 响应给浏览器
