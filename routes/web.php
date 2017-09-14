@@ -39,4 +39,8 @@ $routes->add('leap-year', new Routing\Route('/leap-year/{year}', [
     '_controller' => 'App\Controllers\LeapYearController::indexAction'
 ]));
 
+$routes->add('string', new Routing\Route('/string', [
+    '_controller' => 'App\Controllers\StringController::indexAction'
+]));
+
 return $routes;
