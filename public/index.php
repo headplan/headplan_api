@@ -4,15 +4,22 @@ require_once __DIR__.'/../bootstrap/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel;
-use Headplan\Framework;
+
+# 引入容器配置
+$c = include __DIR__.'/../src/Headplan/Container.php';
+
+$c->setParameter('charset', 'UTF-8');
+$c->setParameter('routes', include __DIR__.'/../routes/web.php');
+
+$c->register('listener.string_response', 'Headplan\Events\StringResponseListener');
+$c->getDefinition('dispatcher')
+    ->addMethodCall('addSubscriber', [new  Symfony\Component\DependencyInjection\Reference('listener.string_response')]);
+
 
 $request = Request::createFromGlobals();
 
-# 引入路由配置
-$routes = include __DIR__.'/../routes/web.php';
-
 # 实例化框架
-$framework = new Framework($routes);
+$framework = $c->get('framework');
 # HTTP缓存
 $framework = new HttpKernel\HttpCache\HttpCache(
     $framework,
